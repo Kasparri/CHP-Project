@@ -1,7 +1,5 @@
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Kasper on 24/10/2017.
@@ -9,14 +7,14 @@ import java.util.Set;
 public class Graph {
 
     List<Node> nodes;
-    Set<Edge> edges;
+    List<Edge> edges;
 
     public Graph() {
         this.nodes = new ArrayList<>();
-        this.edges = new HashSet<>();
+        this.edges = new ArrayList<>();
     }
 
-    public Graph(List<Node> nodes, Set<Edge> edges) {
+    public Graph(List<Node> nodes, List<Edge> edges) {
         this.nodes = nodes;
         this.edges = edges;
     }
@@ -33,7 +31,7 @@ public class Graph {
         this.nodes = nodes;
     }
 
-    public void setEdges(Set<Edge> edges) {
+    public void setEdges(List<Edge> edges) {
         this.edges = edges;
     }
 
@@ -53,7 +51,32 @@ public class Graph {
         return nodes;
     }
 
-    public Set getEdges() {
+    public List getEdges() {
         return edges;
     }
+
+    public boolean isMirrorable(List<Edge> originalEdges, int B) {
+
+        List<Edge> mirrorEdges = new ArrayList<>();
+
+        // Finding mirror edges
+        for (int i = 0; i< this.edges.size(); i++){
+            mirrorEdges.add(originalEdges.get(getMirrorIndex(originalEdges.size(),i)));
+        }
+
+        int sum = 0;
+        for (Edge e : mirrorEdges) {
+            sum += e.getWeight();
+        }
+
+        return sum <= B;
+    }
+
+
+    private int getMirrorIndex(int n, int i) {
+        return n-1-i;
+    }
+
+
+
 }

@@ -3,9 +3,10 @@
  */
 public class Edge {
 
-    Node node1;
-    Node node2;
-    int weight;
+
+    private Node node1;
+    private Node node2;
+    private int weight;
 
 
     public Edge(Node node1, Node node2, int weight) {
@@ -16,10 +17,22 @@ public class Edge {
 
     @Override
     public String toString() {
-        return "Edge{" +
+        return "E{" +
                 node1 +
-                ", " + node2 +
-                ", " + weight +
+                "," + node2 +
+                "," + weight +
                 '}';
+    }
+
+    public Node getNode1() {
+        return node1;
+    }
+
+    public Node getNode2() {
+        return node2;
+    }
+
+    public int getWeight() {
+        return weight;
     }
 }

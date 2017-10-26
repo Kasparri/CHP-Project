@@ -1,6 +1,9 @@
+import jdk.nashorn.internal.runtime.arrays.ArrayIndex;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -9,6 +12,17 @@ public class Main {
     public static void main(String[] args) {
 
         Graph graph = loadUVW();
+
+        try {
+        if (graph.isMirrorable(graph.edges,Integer.parseInt(args[0]))) {
+            System.out.println("The graph is mirrorable");
+        } else {
+            System.out.println("Not mirrorable");
+        }
+        } catch (ArrayIndexOutOfBoundsException ex){
+            System.out.println("Give an argument");
+        }
+
 
         System.out.println(graph);
 
@@ -36,7 +50,6 @@ public class Main {
 
             for (int i = 0; i < m; i++){
 
-
                 Node node1 = graph.getNode(Integer.parseInt(sc.next())-1);
                 Node node2 = graph.getNode(Integer.parseInt(sc.next())-1);
                 int weight = Integer.parseInt(sc.next());
@@ -59,9 +72,6 @@ public class Main {
         return graph;
     }
 
-    private boolean isMirrorable() {
-        throw new NotImplementedException();
-    }
 
 
 
