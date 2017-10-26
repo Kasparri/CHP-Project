@@ -1,9 +1,4 @@
-import jdk.nashorn.internal.runtime.arrays.ArrayIndex;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -12,19 +7,29 @@ public class Main {
     public static void main(String[] args) {
 
         Graph graph = loadUVW();
+        System.out.println(graph);
 
+        int B;
         try {
-        if (graph.isMirrorable(graph.edges,Integer.parseInt(args[0]))) {
+            B = Integer.parseInt(args[0]);
+        } catch (ArrayIndexOutOfBoundsException ex){
+            B = 100; // Default value
+        }
+
+
+        if (graph.isMirrorable(graph.edges,B)) {
             System.out.println("The graph is mirrorable");
         } else {
             System.out.println("Not mirrorable");
         }
-        } catch (ArrayIndexOutOfBoundsException ex){
-            System.out.println("Give an argument");
+
+        graph.getNodes().get(0).digit();
+        for (Node n : graph.getNodes()){
+            System.out.println(n.getNeighboursByNumber());
         }
 
+        graph.createAdjacencyMatrix();
 
-        System.out.println(graph);
 
     }
 
@@ -56,8 +61,8 @@ public class Main {
 
                 Edge edge = new Edge(node1,node2,weight);
                 graph.addEdge(edge);
-                node1.edges.add((edge));
-                node2.edges.add((edge));
+                node1.getEdges().add((edge));
+                node2.getEdges().add((edge));
             }
 
             if (sc.hasNext()){
@@ -71,6 +76,10 @@ public class Main {
         }
         return graph;
     }
+
+
+
+
 
 
 

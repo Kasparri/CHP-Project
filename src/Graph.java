@@ -27,14 +27,6 @@ public class Graph {
                 '}';
     }
 
-    public void setNodes(List<Node> nodes) {
-        this.nodes = nodes;
-    }
-
-    public void setEdges(List<Edge> edges) {
-        this.edges = edges;
-    }
-
     public void addNode(Node node){
         this.nodes.add(node);
     }
@@ -47,11 +39,11 @@ public class Graph {
         return nodes.get(index);
     }
 
-    public List getNodes() {
+    public List<Node> getNodes() {
         return nodes;
     }
 
-    public List getEdges() {
+    public List<Edge> getEdges() {
         return edges;
     }
 
@@ -72,10 +64,28 @@ public class Graph {
         return sum <= B;
     }
 
-
     private int getMirrorIndex(int n, int i) {
         return n-1-i;
     }
+
+
+    public void createAdjacencyMatrix() {
+
+        int[][] adjacencyMatrix = new int[nodes.size()][nodes.size()];
+
+        for (int i = 0; i < nodes.size(); i++){
+            List<Integer> neighbours = nodes.get(i).getNeighboursByNumber();
+            for (int j = 0; j < nodes.size(); j++){
+                if (neighbours.contains(j)) {
+                    adjacencyMatrix[i][j] = 1;
+                } else {
+                    adjacencyMatrix[i][j] = 0;
+                }
+            }
+        }
+
+    }
+
 
 
 

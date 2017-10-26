@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -6,30 +8,72 @@ import java.util.Set;
  */
 public class Node {
 
-    Set<Edge> edges;
-    int number;
+    private List<Edge> edges;
+    private int number;
 
 
     public Node(){
-        this.edges = new HashSet<>();
+        this.edges = new ArrayList<>();
     }
 
     public Node(int number){
         this.number = number;
-        this.edges = new HashSet<>();
+        this.edges = new ArrayList<>();
     }
 
-    public Node(Set<Edge> edges){
+    public Node(List<Edge> edges){
         this.edges = edges;
     }
 
-    public Node(int number, Set<Edge> edges){
+    public Node(int number, List<Edge> edges){
         this.number = number;
         this.edges = edges;
     }
 
     public String toString(){
         return  "v" + this.number;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public List<Edge> getEdges() {
+        return edges;
+    }
+
+    public Node digit(){
+
+        List<Node> edgeNodes = new ArrayList<>();
+
+        if (!edges.get(0).getNode1().equals(this)){
+            edgeNodes.add(edges.get(0).getNode1());
+        } else {
+            edgeNodes.add(edges.get(0).getNode2());
+        }
+
+        System.out.println("Digit of " + this + " is " + edgeNodes.get(0));
+
+        return edgeNodes.get(0);
+    }
+
+    public List<Integer> getNeighboursByNumber(){
+
+        List<Integer> numbers = new ArrayList<>();
+
+        List<Node> edgeNodes = new ArrayList<>();
+        for (Edge edge : edges) {
+            if (!edge.getNode1().equals(this)){
+                edgeNodes.add(edge.getNode1());
+            } else {
+                edgeNodes.add(edge.getNode2());
+            }
+        }
+
+        for (Node n : edgeNodes){
+            numbers.add(n.getNumber());
+        }
+        return numbers;
     }
 
 }
