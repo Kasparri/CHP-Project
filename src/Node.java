@@ -10,6 +10,7 @@ public class Node {
 
     private List<Edge> edges;
     private int number;
+    private boolean visited;
 
 
     public Node(){
@@ -76,4 +77,12 @@ public class Node {
         return numbers;
     }
 
+
+    public boolean isVisited() {
+        return visited;
+    }
+
+    public void setVisited(boolean visited) {
+        this.visited = visited;
+    }
 }
