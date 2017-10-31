@@ -16,7 +16,6 @@ public class Main {
             B = 100; // Default value
         }
 
-
         if (graph.isMirrorable(graph.edges,B)) {
             System.out.println("The graph is mirrorable");
         } else {
@@ -24,6 +23,7 @@ public class Main {
         }
 
         graph.getNodes().get(0).digit();
+        System.out.println("Neighbours:");
         for (Node n : graph.getNodes()){
             System.out.println(n.getNeighboursByNumber());
         }
@@ -32,6 +32,10 @@ public class Main {
 
 
     }
+
+
+
+
 
 
     private static Graph loadUVW() {
@@ -76,12 +80,5 @@ public class Main {
         }
         return graph;
     }
-
-
-
-
-
-
-
 
 }
