@@ -30,6 +30,14 @@ public class Node {
         this.edges = edges;
     }
 
+    public Node getNeighbour(Edge e){
+        if (e.getNode1().equals(this)){
+            return e.getNode2();
+        } else {
+            return e.getNode1();
+        }
+    }
+
     public String toString(){
         return  "v" + this.number;
     }
