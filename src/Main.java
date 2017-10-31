@@ -1,5 +1,5 @@
 import java.io.File;
-import java.util.List;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class Main {
@@ -7,14 +7,23 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Graph graph = loadUVW();
+        String fileName;
+        try {
+            fileName = args[0];
+        } catch (ArrayIndexOutOfBoundsException ex){
+            fileName = "test01.uwg";
+            System.out.println("Using default fileName: " + fileName);
+        }
+
+        Graph graph = loadUVW(fileName);
         System.out.println(graph);
 
         int B;
         try {
-            B = Integer.parseInt(args[0]);
+            B = Integer.parseInt(args[1]);
         } catch (ArrayIndexOutOfBoundsException ex){
             B = 100; // Default value
+            System.out.println("Using default B value: " + B);
         }
 
         if (graph.isMirrorable(graph.edges,B)) {
@@ -36,19 +45,24 @@ public class Main {
 
 
 
-
-
-
-    private static Graph loadUVW() {
+    private static Graph loadUVW(String fileName) {
 
         Graph graph = new Graph();
+        String path = "src/";
+        File file = new File(path+fileName);
+        Scanner sc = null;
 
         try {
-
-            String fileName = "src/testFile.txt";
-            File file = new File(fileName);
-
-            Scanner sc = new Scanner(file);
+            sc = new Scanner(file);
+        } catch (FileNotFoundException ex) {
+            file = new File(path+"test01.uwg");
+            try {
+                sc = new Scanner(file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
 
             int n = Integer.parseInt( sc.next()) ; // Number of verticies
             int m = Integer.parseInt( sc.next() ); // Number of edges
