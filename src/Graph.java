@@ -89,19 +89,21 @@ public class Graph {
     }
 
     public List<Graph> enumerateInitialSpanningTrees() {
+        Graph initialSpanningTree = getInitialSpanningTree();
+        List<Node> initialTreeSequence = initialSpanningTree.getNodes();
+
         return null;
     }
 
-    private Node getUnvisitedChildNode(Node n) {
+    private Tuple getUnvisitedChildNode(Node n) {
         for (Edge edge : n.getEdges()) {
             if (!edge.getNode1().equals(this) && !edge.getNode1().isVisited()){
-                return edge.getNode1();
+                return new Tuple(edge.getNode1(),edge);
             } else if(!edge.getNode2().isVisited()) {
-                return edge.getNode2();
+                return new Tuple(edge.getNode2(),edge);
             }
         }
         return null;
-
     }
 
     private void clearNodes() {
@@ -111,22 +113,28 @@ public class Graph {
     }
 
 
-    public void BFS() {
-        Queue queue = new LinkedList();
-        queue.add(this.nodes.get(0));
-        System.out.println(this.nodes.get(0));
+    public Graph getInitialSpanningTree() {
+        Graph result = new Graph();
+        int count = this.nodes.size();
+        Queue<Node> frontier = new LinkedList();
+        frontier.add(this.nodes.get(0));
         this.nodes.get(0).setVisited(true);
-        while(!queue.isEmpty()) {
-            Node node = (Node)queue.remove();
-            Node child=null;
-            while((child=getUnvisitedChildNode(node))!=null) {
-                child.setVisited(true);
-                System.out.println(child);
-                queue.add(child);
+        this.nodes.get(0).setNumber(count);
+        while(!frontier.isEmpty()) {
+            Node node = frontier.remove();
+            Tuple child=null;
+            while( (child=getUnvisitedChildNode(node) )!= null) {
+                count--;
+                child.getNode().setVisited(true);
+                child.getNode().setNumber(count);
+                frontier.add(child.getNode());
+                result.addEdge(child.getEdge());
+                result.addNode(child.getNode());
             }
         }
         // Clear visited property of nodes
         clearNodes();
+        return result;
     }
 
 

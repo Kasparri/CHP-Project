@@ -7,6 +7,7 @@ import java.util.List;
 public class Node {
 
     private List<Edge> edges;
+
     private int number;
     private boolean visited;
 
@@ -37,24 +38,14 @@ public class Node {
         return number;
     }
 
+    public void setNumber(int number) {
+        this.number = number;
+    }
+
     public List<Edge> getEdges() {
         return edges;
     }
 
-    public Node digit(){
-
-        List<Node> edgeNodes = new ArrayList<>();
-
-        if (!edges.get(0).getNode1().equals(this)){
-            edgeNodes.add(edges.get(0).getNode1());
-        } else {
-            edgeNodes.add(edges.get(0).getNode2());
-        }
-
-        System.out.println("Digit of " + this + " is " + edgeNodes.get(0));
-
-        return edgeNodes.get(0);
-    }
 
     public List<Integer> getNeighboursByNumber(){
 

@@ -40,6 +40,9 @@ public class Main {
 
         graph.createAdjacencyMatrix();
 
+        System.out.println("BFS:");
+        graph.getInitialSpanningTree();
+
 
     }
 
