@@ -3,7 +3,7 @@ import java.util.Set;
 /**
  * Created by Kasper on 31/10/2017.
  */
-public class Edge {
+public class Edge implements Comparable<Edge> {
 
     private int src;
     private int dest;
@@ -52,5 +52,15 @@ public class Edge {
     @Override
     public String toString() {
         return "(" + src + "," + dest + ")";
+    }
+
+    @Override
+    public int compareTo(Edge o) {
+
+        if (this.src == o.src){
+            return this.dest - o.dest;
+        } else {
+            return this.src - o.src;
+        }
     }
 }

@@ -70,21 +70,13 @@ public class Main {
             System.out.println("Using default fileName: " + fileName);
         }
 
+
         Graph graph = loadUVW(fileName);
         System.out.println(graph);
 
-        int B;
-        try {
-            B = Integer.parseInt(args[1]);
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            B = 100; // Default value
-            System.out.println("Using default B value: " + B);
-        }
+        List<Graph> spanningTrees = findAllSpanningTrees(graph);
+        System.out.println(spanningTrees.size());
 
-        System.out.println(findAllSpanningTrees(graph).size());
-
-        //Graph initial = graph.findInitialSpanningTree();
-        //System.out.println("Initial: " + initial + " with weight: " + initial.getGraphWeight());
 
 
 
@@ -122,6 +114,11 @@ public class Main {
         List<Graph> spanningTrees = new ArrayList<>();
 
         Graph initialSpanningTree = originalGraph.findInitialSpanningTree();
+
+        Collections.sort(initialSpanningTree.getEdges());
+        Collections.sort(initialSpanningTree.getNodes());
+
+
         spanningTrees.add(initialSpanningTree);
 
         int k = originalGraph.getN() - 2;
@@ -134,35 +131,39 @@ public class Main {
 
     static void findChildren(Graph ptree, int k, List<Graph> spanningTrees, Graph originalGraph, Graph initalTree) {
 
-        if (k != -1 && k < Min(initalTree,ptree)) {
+        if (k < Min(initalTree,ptree) ) {
+            if (k != -1) {
 
-            Edge ek = ptree.getEdge(k);
+                Edge ek = ptree.getEdge(k);
 
-            for (Edge gEdge : entr(ptree, ek, originalGraph)) {
-
-
-                // TODO: stuff
-                // cTree is pTree without edge k with edge g.
-                // Finding the fundamental cut associated with (T \ f) = C*(T\f)
-
-                // New graph Tc without ek with edge
-                Graph cTree = ptree.makeCopy();
-
-                cTree.setEdge(k, gEdge);
-
-                //cTree.removeEdge(ek);
-                //cTree.addEdge(gEdge);
+                for (Edge gEdge : entr(ptree, ek, originalGraph)) {
 
 
-                // This is a spanning tree
-                spanningTrees.add(cTree);
-                findChildren(cTree, k - 1, spanningTrees, originalGraph, initalTree);
+                    // TODO: stuff
+                    // cTree is pTree without edge k with edge g.
+                    // Finding the fundamental cut associated with (T \ f) = C*(T\f)
+
+                    // New graph Tc without ek with edge
+                    Graph cTree = ptree.makeCopy();
+
+                    cTree.setEdge(k, gEdge);
+
+                    //cTree.removeEdge(ek);
+                    //cTree.addEdge(gEdge);
 
 
+                    // This is a spanning tree
+                    spanningTrees.add(cTree);
+                    findChildren(cTree, k - 1, spanningTrees, originalGraph, initalTree);
+
+
+                }
+                findChildren(ptree, k - 1, spanningTrees, originalGraph, initalTree);
             }
-            findChildren(ptree, k - 1, spanningTrees, originalGraph, initalTree);
+            return;
+        } else {
+            System.out.println("Saved one");
         }
-        return;
     }
 
     public static List<Edge> entr(Graph tree, Edge edge, Graph originalGraph) {
