@@ -10,7 +10,7 @@ public class Edge implements Comparable<Edge> {
     private int weight;
 
     public Edge(int src, int dest, int weight) {
-        if (src < dest){
+        if (src < dest) {
             this.src = src;
             this.dest = dest;
         } else {
@@ -34,16 +34,14 @@ public class Edge implements Comparable<Edge> {
 
 
     /**
-     *
-     * @param nodes
-     * If either the src or dest is contained in the edge, it will add the other
-     * If neither the src or dest is contained, nothing is added to the set.
+     * @param nodes If either the src or dest is contained in the edge, it will add the other
+     *              If neither the src or dest is contained, nothing is added to the set.
      */
 
     public void addToSetIfUnion(Set<Integer> nodes) {
-        if (nodes.contains(this.src)){
+        if (nodes.contains(this.src)) {
             nodes.add(this.dest);
-        } else if (nodes.contains(this.dest)){
+        } else if (nodes.contains(this.dest)) {
             nodes.add(this.src);
         }
 
@@ -56,11 +54,6 @@ public class Edge implements Comparable<Edge> {
 
     @Override
     public int compareTo(Edge o) {
-
-        if (this.src == o.src){
-            return this.dest - o.dest;
-        } else {
-            return this.src - o.src;
-        }
+        return this.src - o.src;
     }
 }

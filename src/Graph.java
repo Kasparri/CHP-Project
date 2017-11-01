@@ -60,7 +60,6 @@ public class Graph {
 
 
     public int[][] fillAdjacencyMatrix(){
-
         adjacencyMatrix = new int[N][N];
 
         for (int i = 0; i < N; i++){
@@ -123,7 +122,6 @@ public class Graph {
         fillAdjacencyMatrix();
 
         while (!open_set.isEmpty()) {
-
             parent = open_set.pop();
 
             if (closed_set.size() == N - 1) {
@@ -156,21 +154,6 @@ public class Graph {
         }
         return sum;
     }
-
-
-
-
-    public void sortEdges(){
-
-
-
-    }
-
-
-
-
-
-
 
 
 
@@ -218,4 +201,24 @@ public class Graph {
         return new Graph(new ArrayList<>(this.nodes), new ArrayList<>(this.edges));
     }
 
+
+    public boolean checkIfSpanningTree(int N){
+
+        return this.nodes.size() == N && this.edges.size() == N-1 ;
+
+    }
+
+    public int getMirrorWeight(List<Edge> edges) {
+
+        int total_weight = 0;
+        for (Edge edge : this.edges){
+            for (int i = 0; i < edges.size(); i++){
+                if (edge == edges.get(i)){
+                    total_weight += edges.get(edges.size()-1-i).getWeight();
+                }
+            }
+        }
+
+        return total_weight;
+    }
 }
