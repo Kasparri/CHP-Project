@@ -44,7 +44,6 @@ public class Edge implements Comparable<Edge> {
         } else if (nodes.contains(this.dest)) {
             nodes.add(this.src);
         }
-
     }
 
     @Override

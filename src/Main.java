@@ -8,6 +8,11 @@ import java.util.*;
 public class Main {
 
 
+    private static int currentB = Integer.MAX_VALUE;
+    private static Graph currentTree = null;
+    private static int numberOfSpanningTrees = 0;
+
+
     private static Graph loadUVW(String fileName) {
 
         Graph graph = new Graph();
@@ -60,70 +65,47 @@ public class Main {
         return graph;
     }
 
+
     public static void main(String[] args) {
 
         String fileName;
         try {
             fileName = args[0];
         } catch (ArrayIndexOutOfBoundsException ex) {
-            fileName = "test01.uwg";
+            fileName = "test03.uwg";
             System.out.println("Using default fileName: " + fileName);
         }
 
+        System.out.println();
 
         Graph graph = loadUVW(fileName);
 
+        findAllSpanningTrees(graph);
+        System.out.println("Amount of spanning trees: " + numberOfSpanningTrees);
 
-        System.out.println(graph);
-
-        List<Graph> spanningTrees = findAllSpanningTrees(graph);
-        System.out.println(spanningTrees.size());
-
-
-        int currentB = Integer.MAX_VALUE;
-        Graph currentTree = null;
-        while (!spanningTrees.isEmpty()){
-          int B = spanningTrees.get(0).getGraphWeight();
-          int mirrorB = spanningTrees.get(0).getMirrorWeight(graph.getEdges());
-          int maxB = Integer.max(B,mirrorB);
-
-          if (maxB < currentB){
-              currentB = maxB;
-              currentTree = spanningTrees.get(0);
-          }
-          spanningTrees.remove(0);
-        }
-
-        System.out.println(currentB);
-        System.out.println(currentTree);
-
+        System.out.println();
+        System.out.println("Lowest B:" + currentB);
+        System.out.println("Optimal tree: " + currentTree);
 
     }
 
-    public static List<Graph> findAllSpanningTrees(Graph originalGraph) {
-        List<Graph> spanningTrees = new ArrayList<>();
+    public static void findAllSpanningTrees(Graph originalGraph) {
 
         Graph initialSpanningTree = originalGraph.findInitialSpanningTree();
 
         Collections.sort(initialSpanningTree.getEdges());
         Collections.sort(initialSpanningTree.getNodes());
 
-        System.out.println("initial: " + initialSpanningTree);
-
-        spanningTrees.add(initialSpanningTree);
-
-        System.out.println(initialSpanningTree);
+        checkB(initialSpanningTree);
 
         int k = originalGraph.getN() - 1 - 1; // One more for 0-indexed
 
-        findChildren(initialSpanningTree, k, spanningTrees, originalGraph);
+        findChildren(initialSpanningTree, k, originalGraph);
 
-        return spanningTrees;
     }
 
 
-    static void findChildren(Graph ptree, int k, List<Graph> spanningTrees,
-                             Graph originalGraph) {
+    static void findChildren(Graph ptree, int k, Graph originalGraph) {
 
         if (k != -1) {
 
@@ -137,11 +119,14 @@ public class Main {
                 cTree.setEdge(k, gEdge);
 
                 // This is a spanning tree
-                spanningTrees.add(cTree);
-                findChildren(cTree, k - 1, spanningTrees, originalGraph);
+                //spanningTrees.add(cTree);
+
+                checkB(cTree);
+
+                findChildren(cTree, k - 1, originalGraph);
 
             }
-            findChildren(ptree, k - 1, spanningTrees, originalGraph);
+            findChildren(ptree, k - 1, originalGraph);
         }
         return;
     }
@@ -189,7 +174,6 @@ public class Main {
 
     public static Set<Integer> findConnectedNodes(int initialNode, List<Edge> edges) {
         Set<Integer> nodes = new HashSet<>();
-
         nodes.add(initialNode);
 
         int before = nodes.size();
@@ -204,5 +188,13 @@ public class Main {
         return nodes;
     }
 
+    public static void checkB(Graph tree){
+        int temp = currentB;
+        currentB = tree.getBValue(currentB);
+        if (currentB < temp){
+            currentTree = tree;
+        }
+        numberOfSpanningTrees++;
+    }
 
 }
