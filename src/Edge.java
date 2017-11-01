@@ -1,38 +1,56 @@
+import java.util.Set;
+
 /**
- * Created by Kasper on 24/10/2017.
+ * Created by Kasper on 31/10/2017.
  */
 public class Edge {
 
-
-    private Node node1;
-    private Node node2;
+    private int src;
+    private int dest;
     private int weight;
 
-
-    public Edge(Node node1, Node node2, int weight) {
-        this.node1 = node1;
-        this.node2 = node2;
+    public Edge(int src, int dest, int weight) {
+        if (src < dest){
+            this.src = src;
+            this.dest = dest;
+        } else {
+            this.src = dest;
+            this.dest = src;
+        }
         this.weight = weight;
     }
 
-    @Override
-    public String toString() {
-        return "E{" +
-                node1 +
-                "," + node2 +
-                "," + weight +
-                '}';
+    public int getSrc() {
+        return src;
     }
 
-    public Node getNode1() {
-        return node1;
-    }
-
-    public Node getNode2() {
-        return node2;
+    public int getDest() {
+        return dest;
     }
 
     public int getWeight() {
         return weight;
+    }
+
+
+    /**
+     *
+     * @param nodes
+     * If either the src or dest is contained in the edge, it will add the other
+     * If neither the src or dest is contained, nothing is added to the set.
+     */
+
+    public void addToSetIfUnion(Set<Integer> nodes) {
+        if (nodes.contains(this.src)){
+            nodes.add(this.dest);
+        } else if (nodes.contains(this.dest)){
+            nodes.add(this.src);
+        }
+
+    }
+
+    @Override
+    public String toString() {
+        return "(" + src + "," + dest + ")";
     }
 }
