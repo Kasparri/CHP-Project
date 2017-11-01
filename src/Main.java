@@ -78,8 +78,6 @@ public class Main {
         System.out.println(spanningTrees.size());
 
 
-
-
 //        // TESTING ENV START
 //
 //        Edge e1 = new Edge(0,1,10);
@@ -110,14 +108,12 @@ public class Main {
     }
 
     public static List<Graph> findAllSpanningTrees(Graph originalGraph) {
-
         List<Graph> spanningTrees = new ArrayList<>();
 
         Graph initialSpanningTree = originalGraph.findInitialSpanningTree();
 
         Collections.sort(initialSpanningTree.getEdges());
         Collections.sort(initialSpanningTree.getNodes());
-
 
         spanningTrees.add(initialSpanningTree);
 
@@ -129,7 +125,8 @@ public class Main {
     }
 
 
-    static void findChildren(Graph ptree, int k, List<Graph> spanningTrees, Graph originalGraph, Graph initalTree) {
+    static void findChildren(Graph ptree, int k, List<Graph> spanningTrees,
+                             Graph originalGraph, Graph initalTree) {
 
         if (k < Min(initalTree,ptree) ) {
             if (k != -1) {
@@ -138,24 +135,14 @@ public class Main {
 
                 for (Edge gEdge : entr(ptree, ek, originalGraph)) {
 
-
-                    // TODO: stuff
-                    // cTree is pTree without edge k with edge g.
-                    // Finding the fundamental cut associated with (T \ f) = C*(T\f)
-
                     // New graph Tc without ek with edge
                     Graph cTree = ptree.makeCopy();
 
                     cTree.setEdge(k, gEdge);
 
-                    //cTree.removeEdge(ek);
-                    //cTree.addEdge(gEdge);
-
-
                     // This is a spanning tree
                     spanningTrees.add(cTree);
                     findChildren(cTree, k - 1, spanningTrees, originalGraph, initalTree);
-
 
                 }
                 findChildren(ptree, k - 1, spanningTrees, originalGraph, initalTree);
@@ -164,13 +151,13 @@ public class Main {
         } else {
             System.out.println("Saved one");
         }
+
     }
 
     public static List<Edge> entr(Graph tree, Edge edge, Graph originalGraph) {
         List<Edge> edges;
 
         // Fundamental cut set problem
-
         int src = edge.getSrc();
 
         List<Edge> newEdges = new ArrayList<>(tree.getEdges());
@@ -180,7 +167,7 @@ public class Main {
         Set<Integer> subgraph2 = findConnectedNodes(subgraph1,tree.getNodes()); // Nodes in subgraph 2
 
         edges = getEdgesBetweenSubgraphs(subgraph1,subgraph2, originalGraph);
-        edges.remove(edge); // Removing ek
+        edges.remove(edge); // Removing ek from the list
 
         return edges;
     }
@@ -189,7 +176,6 @@ public class Main {
         List<Edge> gEdges = new ArrayList<>();
 
         for (Edge edge : originalGraph.getEdges()){
-
             if ( (subgraph1.contains(edge.getSrc()) && subgraph2.contains(edge.getDest()))
                     || ( subgraph1.contains(edge.getDest()) && subgraph2.contains(edge.getSrc()))
                     && edge.getWeight() != Graph.NAN_EDGE){
