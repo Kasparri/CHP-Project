@@ -2,18 +2,17 @@ class Tree extends Graph {
 	
 	private UF UF;
 	
-	public Tree(int noOfNodes) {
-		super(noOfNodes);
-		UF = new UF(noOfNodes);
+	public Tree(int N) {
+		super(N);
+		UF = new UF(N);
 	}
 
-	public void addEdge(int v1, int v2, int weight) {
-		if (UF.connected(v1, v2)) {
+	public void addEdge(int src, int dest, int weight) {
+		if (UF.connected(src, dest)) {
 			return; // Don't add if it creates a cycle
 		}
-		UF.union(v1, v2);
-		
-		super.addEdge(v1, v2, weight);
+		UF.union(src, dest);
+		super.addEdge(src, dest, weight);
 	}
 	
 	public void removeEdge(int src, int dest) {
@@ -25,13 +24,11 @@ class Tree extends Graph {
 		}
 	}
 	
-	public boolean connected(int v1, int v2) {
-		return UF.connected(v1, v2);
+	public boolean connected(int src, int dest) {
+		return UF.connected(src, dest);
 	}
 
-	
-	@Override
-	public Object clone() {
+	public Tree copy() {
 		Tree g = new Tree(getN());
 		for (Edge e : getEdges()) {
 			g.addEdge(e);

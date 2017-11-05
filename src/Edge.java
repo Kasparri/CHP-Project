@@ -52,27 +52,6 @@ public class Edge implements Comparable<Edge> {
     }
 
     @Override
-    public int hashCode() {
-        int result = src;
-        result = 31 * result + dest;
-        result = 31 * result + weight;
-        return result;
-    }
-
-    /**
-     * @param nodes If either the src or dest is contained in the edge, it will add the other
-     *              If neither the src or dest is contained, nothing is added to the set.
-     */
-
-    public void addToSetIfUnion(Set<Integer> nodes) {
-        if (nodes.contains(this.src)) {
-            nodes.add(this.dest);
-        } else if (nodes.contains(this.dest)) {
-            nodes.add(this.src);
-        }
-    }
-
-    @Override
     public String toString() {
         return "(" + src + "," + dest + ")";
     }
