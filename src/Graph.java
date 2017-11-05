@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 /**
@@ -12,53 +14,111 @@ public class Graph {
 
     private List<Integer> nodes;
     private List<Edge> edges;
+    private int numberOfSpanningTrees = 0;
+    private static int currentB = Integer.MAX_VALUE;
+    private static Tree bestTree = null;
+    private Tree t0;
 
     private int[][] adjacencyMatrix;
 
-    public Graph(List<Integer> nodes, List<Edge> edges) {
-        this.nodes = nodes;
-        this.edges = edges;
-    }
-
-    public Graph() {
+    Graph(int N) {
+        this.N = N;
         this.nodes = new ArrayList<>();
         this.edges = new ArrayList<>();
-        this.N = 0;
-        this.M = 0;
+    }
+    Graph(String fileName) {
+        this.nodes = new ArrayList<>();
+        this.edges = new ArrayList<>();
+        String path = "src/";
+        File file = new File(path + fileName);
+        Scanner sc = null;
+
+        try {
+            sc = new Scanner(file);
+        } catch (FileNotFoundException ex) {
+            file = new File(path + "test01.uwg");
+            try {
+                sc = new Scanner(file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            int TempN = Integer.parseInt(sc.next()); // Number of verticies
+            int TempM = Integer.parseInt(sc.next()); // Number of edges
+
+            for (int i = 0; i < TempN; i++) {
+                this.addNode(i);
+                N++;
+            }
+
+            for (int i = 0; i < TempM; i++) {
+
+                int src = this.getNode(Integer.parseInt(sc.next()) - 1);
+                int dest = this.getNode(Integer.parseInt(sc.next()) - 1);
+                int weight = Integer.parseInt(sc.next());
+
+                Edge edge = new Edge(src, dest, weight);
+                this.addEdge(edge);
+
+            }
+
+            if (sc.hasNext()) {
+                throw new Exception("It's no good");
+            }
+
+            sc.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public int getNode(int index) {
+    private int getNode(int index) {
         return getNodes().get(index);
     }
 
-    public List<Integer> getNodes() {
+    List<Integer> getNodes() {
         return nodes;
     }
 
-    public int getN() {
+    int getN() {
         return N;
     }
 
-    public void addNode(int node) {
+    void addNode(int node) {
         nodes.add(node);
-        N++;
     }
 
-    public void addEdge(Edge edge) {
-        edges.add(edge);
+    void addEdge(Edge edge) {
+        addEdge(edge.getSrc(),edge.getDest(),edge.getWeight());
+    }
+
+    public void addEdge(int v1, int v2, int weight) {
+        Edge e = new Edge(v1, v2, weight);
+        edges.add(e);
         M++;
     }
 
-    public Edge getEdge(int index) {
+    public void removeEdge(int src, int dest) {
+        for (Edge e : edges) {
+            if (e.getSrc() == src && e.getDest() == dest) {
+                edges.remove(e);
+                break;
+            }
+        }
+    }
+
+    Edge getEdge(int index) {
         return this.edges.get(index);
     }
 
-    public List<Edge> getEdges() {
+    List<Edge> getEdges() {
         return this.edges;
     }
 
 
-    public int[][] fillAdjacencyMatrix() {
+    private int[][] fillAdjacencyMatrix() {
         adjacencyMatrix = new int[N][N];
 
         for (int i = 0; i < N; i++) {
@@ -73,7 +133,7 @@ public class Graph {
         return adjacencyMatrix;
     }
 
-    public List<Integer> findSuccessors(int node) {
+    private List<Integer> findSuccessors(int node) {
         List<Integer> successors = new ArrayList<>();
         for (int i = 0; i < N; i++) {
             int weight = adjacencyMatrix[node][i];
@@ -85,7 +145,7 @@ public class Graph {
     }
 
 
-    public Edge findEdge(int parent, int successor) {
+    private Edge findEdge(int parent, int successor) {
         for (Edge edge : edges) {
             if ((edge.getSrc() == parent && edge.getDest() == successor)
                     || (edge.getSrc() == successor && edge.getDest() == parent)) {
@@ -96,10 +156,10 @@ public class Graph {
     }
 
 
-    public Graph findInitialSpanningTree() {
+    private Tree findInitialSpanningTree() {
 
         // DFS Version
-        Graph initialTree = new Graph();
+        Tree initialTree = new Tree(N);
 
         Stack<Integer> open_set = new Stack<>();
         List<Integer> closed_set = new ArrayList<>();
@@ -135,7 +195,81 @@ public class Graph {
         return null;
     }
 
-    public int getGraphWeight() {
+    void findAllSpanningTrees() {
+
+        findFirstSpanningTree();
+
+        //Collections.sort(t0.getEdges());
+        //Collections.sort(t0.getNodes());
+
+        checkB(t0);
+
+        int k = getM() - 1 - 1; // One more for 0-indexed
+
+        findChildren(t0, k);
+    }
+
+
+    private void findFirstSpanningTree() {
+        t0 = new Tree(N);
+//		t0.addEdge(edges.get(noOfEdges-1));
+        for (Edge e : edges) {
+            t0.addEdge(e);
+        }
+        for (int n : nodes) {
+            t0.addNode(n);
+        }
+    }
+
+    private void findChildren(Tree ptree, int k) {
+
+        if (k != -1) {
+            Edge ek = edges.get(k);
+
+            for (Edge gEdge : entr(ptree, k)) {
+
+                // New graph Tc without ek with edge
+                Tree cTree = (Tree) ptree.clone();
+
+                cTree.removeEdge(ek.getSrc(),ek.getDest());
+                cTree.addEdge(gEdge);
+
+                // This is a spanning tree
+                //spanningTrees.add(cTree);
+
+                checkB(cTree);
+
+                findChildren(cTree, k - 1);
+
+            }
+            findChildren(ptree, k - 1);
+        }
+    }
+
+    private List<Edge> entr(Tree tp, int k) {
+        // Entr(T^p, e_k) = C*(T^p\e_k) intersect C*(T^0\e_k)
+        // C* = fundamental cut
+
+        List<Edge> commonCutEdges = new LinkedList<Edge>();
+
+        Edge ek = edges.get(k);
+        int v1 = ek.getSrc();
+        int v2 = ek.getDest();
+        Tree tp_ = (Tree) tp.clone();
+        Tree t0_ = (Tree) t0.clone();
+        tp_.removeEdge(v1, v2);
+        t0_.removeEdge(v1, v2);
+
+        for (Edge e : edges) {
+            if (!tp_.connected(e.getSrc(), e.getDest()) && !t0_.connected(e.getSrc(), e.getDest()) && !e.equals(ek)) {
+                commonCutEdges.add(e);
+            }
+        }
+
+        return commonCutEdges;
+    }
+
+    int getGraphWeight() {
         int sum = 0;
         for (Edge edge : this.edges) {
             sum += edge.getWeight();
@@ -151,29 +285,33 @@ public class Graph {
                 '}';
     }
 
-    public void setEdge(int k, Edge gEdge) {
+    void setEdge(int k, Edge gEdge) {
         this.edges.set(k, gEdge);
     }
 
-    public Graph makeCopy() {
-        return new Graph(new ArrayList<>(this.nodes), new ArrayList<>(this.edges));
-    }
-
-    public int getMirrorWeight(List<Edge> edges) {
+    int getMirrorWeight(List<Edge> edges, Graph originalGraph) {
         int total_weight = 0;
-        for (Edge edge : this.edges) {
-            for (int i = 0; i < edges.size(); i++) {
-                if (edge == edges.get(i)) {
-                    total_weight += edges.get(edges.size() - 1 - i).getWeight();
-                }
-            }
+
+        for (Edge e : edges) {
+            int weight = originalGraph.getMirrorEdgeWeight(e);
+            total_weight += originalGraph.getMirrorEdgeWeight(e);
         }
         return total_weight;
     }
 
-    public int getBValue(int currentB) {
+    private int getMirrorEdgeWeight(Edge e) {
+        for (int i = 0; i < this.edges.size(); i++) {
+            Edge ef = edges.get(i);
+            if (edges.get(i).equals(e)) {
+                return this.edges.get(this.edges.size() - 1 - i).getWeight();
+            }
+        }
+        return Integer.MIN_VALUE;
+    }
+
+    int getBValue(int currentB, Graph originalGraph) {
         int B = this.getGraphWeight();
-        int mirrorB = getMirrorWeight(this.edges);
+        int mirrorB = getMirrorWeight(edges, originalGraph);
         int maxB = Integer.max(B, mirrorB);
 
         if (maxB < currentB) {
@@ -182,4 +320,40 @@ public class Graph {
         return currentB;
     }
 
+    void checkB(Tree tree) {
+        int temp = currentB;
+        currentB = tree.getBValue(currentB, this);
+        if (currentB < temp) {
+            bestTree = tree;
+        }
+        numberOfSpanningTrees++;
+    }
+
+    int getNumberOfSpanningTrees() {
+        return numberOfSpanningTrees;
+    }
+    String toGraphviz() {
+        String s = "graph g {\n" +
+                "	rankdir=LR;\n" +
+                "	size=\"8,5\"\n" +
+                "	node [shape = circle];\n";
+
+        for (Edge e : edges) {
+            s += "	" + e.getSrc() + " -- " + e.getDest() + "[ label = " + e.getWeight() + " ];\n";
+        }
+        s += "}";
+
+        return s;
+    }
+
+    static int getCurrentB() {
+        return currentB;
+    }
+    static Graph getBestTree() {
+        return bestTree;
+    }
+
+    public int getM() {
+        return M;
+    }
 }

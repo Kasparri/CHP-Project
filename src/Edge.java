@@ -32,6 +32,32 @@ public class Edge implements Comparable<Edge> {
         return weight;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Edge edge = (Edge) o;
+        if(weight != edge.weight) {
+            return false;
+        }
+        if(src == edge.src && dest == edge.dest) {
+            return true;
+        }
+        if(src == edge.dest && dest == edge.src ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        int result = src;
+        result = 31 * result + dest;
+        result = 31 * result + weight;
+        return result;
+    }
 
     /**
      * @param nodes If either the src or dest is contained in the edge, it will add the other
