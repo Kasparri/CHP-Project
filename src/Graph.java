@@ -59,7 +59,7 @@ public class Graph {
         return currentB;
     }
 
-    public static Graph getBestTree() {
+    public static SpanningTree getBestTree() {
         return bestTree;
     }
 
@@ -87,6 +87,7 @@ public class Graph {
             if (e.getSrc() == src && e.getDest() == dest) {
                 edges.remove(e);
                 weight-= e.getWeight();
+                M--;
                 break;
             }
         }
@@ -167,8 +168,9 @@ public class Graph {
     }
 
     protected int getMirrorEdgeWeight(Edge e) {
+
         for (int i = 0; i < this.edges.size(); i++) {
-            if (edges.get(i).equals(e)) {
+            if (this.edges.get(i).equals(e)) {
                 return this.edges.get(this.edges.size() - 1 - i).getWeight();
             }
         }
@@ -176,23 +178,55 @@ public class Graph {
         return Integer.MIN_VALUE;
     }
 
-    protected int getBValue(int currentB, Graph originalGraph) {
+    protected int getBValue(int currentBValue, Graph originalGraph) {
         int B = this.getWeight();
-        int mirrorB = getMirrorWeight(edges, originalGraph);
+
+        int mirrorB = getMirrorWeight(this.edges, originalGraph);
         int maxB = Integer.max(B, mirrorB);
 
-        if (maxB < currentB) {
-            currentB = maxB;
+        if (maxB < currentBValue) {
+            currentBValue = maxB;
         }
-        return currentB;
+        return currentBValue;
     }
 
-    private void checkTree(SpanningTree tree) {
+    public void checkTree(SpanningTree tree) {
         int temp = currentB;
-        currentB = tree.getBValue(currentB, this);
+        currentB = tree.getBValue(currentB, Main.originalGraph);
         if (currentB < temp) {
             bestTree = tree;
         }
         numberOfSpanningTrees++;
     }
+
+    public Graph copy(){
+        Graph g = new Graph(N);
+        for (Edge e : edges){
+            g.addEdge(e);
+        }
+        return g;
+    }
+
+    public int getWeight(List<Edge> edges){
+        int sum = 0;
+        for (Edge e : edges){
+            sum += e.getWeight();
+        }
+        return sum;
+    }
+
+    public int getMirrorEdgesWeight(List<Edge> edges){
+        int sum = 0;
+
+        for (Edge e : edges){
+            for (int i = 0; i < this.edges.size(); i++) {
+                if (this.edges.get(i).equals(e)) {
+                    sum += this.edges.get(this.edges.size() - 1 - i).getWeight();
+                }
+            }
+        }
+        return sum;
+
+    }
+
 }
