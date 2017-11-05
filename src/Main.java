@@ -10,12 +10,15 @@ public class Main {
     public static List<Edge> originalEdges = null;
     static Graph prunedGraph = null;
 
+    public static int removedWeight = 0;
+    public static int removedMirrorWeight = 0;
+
     public static void main(String[] args) {
 
         long startTime = System.currentTimeMillis();
 
         try {
-            String fileName = "TestFile4";
+            String fileName = "TestFile3";
             originalGraph = Graph.loadUWG(fileName);
             originalEdges = originalGraph.getEdges();
 
@@ -23,16 +26,20 @@ public class Main {
             removedEdges = pruneGraph(originalGraph);
 
             System.out.println(removedEdges);
+            System.out.println(originalGraph.getMirrorEdges(removedEdges));
+
+            removedWeight = originalGraph.getWeight(removedEdges);
+            removedMirrorWeight = originalGraph.getMirrorEdgesWeight(removedEdges);
+
             prunedGraph.findAllSpanningTrees();
 
 
             Graph best = Graph.getBestTree();
 
-            System.out.println(originalGraph.getWeight(removedEdges));
-            System.out.println(originalGraph.getMirrorEdgesWeight(removedEdges));
 
-            System.out.println(originalGraph.getWeight(best.getEdges()));
-            System.out.println(originalGraph.getMirrorEdgesWeight(best.getEdges()));
+
+            System.out.println("remvoed weight: " + removedWeight);
+            System.out.println("removed MIrror Weight: " + removedMirrorWeight);
 
 
 
@@ -61,26 +68,45 @@ public class Main {
 
         int[][] adjacencyMatrix = createAdjacencyMatrix(prunedGraph);
 
-        for (int i = 0; i < adjacencyMatrix.length; i++){
-            List<Edge> edges = new ArrayList<>();
-            for (int j = 0; j < adjacencyMatrix[i].length; j++){
-                if (adjacencyMatrix[i][j] != -1){
-                    int index = prunedGraph.getEdges().indexOf(new Edge(i,j,adjacencyMatrix[i][j]));
-                    edges.add(prunedGraph.getEdges().get(index));
+        while (nodeWithSingleNeighbourLeft(adjacencyMatrix)){
+            for (int i = 0; i < adjacencyMatrix.length; i++){
+                List<Edge> edges = new ArrayList<>();
+                for (int j = 0; j < adjacencyMatrix[i].length; j++){
+                    if (adjacencyMatrix[i][j] != -1){
+                        int index = prunedGraph.getEdges().indexOf(new Edge(i,j,adjacencyMatrix[i][j]));
+                        edges.add(prunedGraph.getEdges().get(index));
+                    }
+                }
+                if (edges.size() == 1){
+                    Edge e = edges.get(0);
+                    prunedGraph.removeEdge(e.getSrc(),e.getDest());
+                    adjacencyMatrix[e.getSrc()][e.getDest()] = -1;
+                    adjacencyMatrix[e.getDest()][e.getSrc()] = -1;
+                    removedEdges.add(e);
                 }
             }
-            if (edges.size() == 1){
-                Edge e = edges.get(0);
-                prunedGraph.removeEdge(e.getSrc(),e.getDest());
-                adjacencyMatrix[e.getSrc()][e.getDest()] = -1;
-                adjacencyMatrix[e.getDest()][e.getSrc()] = -1;
-                removedEdges.add(e);
-            }
         }
+
+
 
         return removedEdges;
     }
 
+    private static boolean nodeWithSingleNeighbourLeft(int[][] adjacencyMatrix) {
+
+        for (int i = 0; i < adjacencyMatrix.length; i++){
+            int sum = 0;
+            for (int j = 0; j < adjacencyMatrix[i].length; j++){
+                if (adjacencyMatrix[i][j] != -1){
+                    sum++;
+                }
+            }
+            if (sum == 1){
+                return true;
+            }
+        }
+        return false;
+    }
 
 
     public static int[][] createAdjacencyMatrix(Graph g){

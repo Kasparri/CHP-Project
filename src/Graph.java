@@ -179,9 +179,9 @@ public class Graph {
     }
 
     protected int getBValue(int currentBValue, Graph originalGraph) {
-        int B = this.getWeight();
+        int B = this.getWeight() + Main.removedWeight;
 
-        int mirrorB = getMirrorWeight(this.edges, originalGraph);
+        int mirrorB = getMirrorWeight(this.edges, originalGraph) + Main.removedMirrorWeight;
         int maxB = Integer.max(B, mirrorB);
 
         if (maxB < currentBValue) {
@@ -214,6 +214,28 @@ public class Graph {
         }
         return sum;
     }
+
+    public List<Edge> getMirrorEdges(List<Edge> edges){
+
+        // Getting mirrors compared to the graph it is called on
+
+        List<Edge> mirrorEdges = new ArrayList<>();
+
+        for (Edge e : edges){
+            for (int i = 0; i < this.edges.size(); i++){
+                Edge oriEdge = this.edges.get(i);
+                if (oriEdge.equals(e)){
+                    // i is the index of the edge then
+                    int mirrorIndex = this.edges.size() - 1 - i;
+                    mirrorEdges.add(this.edges.get(mirrorIndex));
+                }
+            }
+        }
+        return mirrorEdges;
+
+    }
+
+
 
     public int getMirrorEdgesWeight(List<Edge> edges){
         int sum = 0;
