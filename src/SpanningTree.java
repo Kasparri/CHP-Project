@@ -1,8 +1,8 @@
-class Tree extends Graph {
+class SpanningTree extends Graph {
 	
 	private UF UF;
 	
-	public Tree(int N) {
+	public SpanningTree(int N) {
 		super(N);
 		UF = new UF(N);
 	}
@@ -28,8 +28,8 @@ class Tree extends Graph {
 		return UF.connected(src, dest);
 	}
 
-	public Tree copy() {
-		Tree g = new Tree(getN());
+	public SpanningTree copy() {
+		SpanningTree g = new SpanningTree(getN());
 		for (Edge e : getEdges()) {
 			g.addEdge(e);
 		}

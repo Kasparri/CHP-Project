@@ -1,8 +1,7 @@
-import java.util.Set;
-
 /**
  * Created by Kasper on 31/10/2017.
  */
+@SuppressWarnings("WeakerAccess")
 public class Edge implements Comparable<Edge> {
 
     private int src;
@@ -38,17 +37,7 @@ public class Edge implements Comparable<Edge> {
         if (o == null || getClass() != o.getClass()) return false;
 
         Edge edge = (Edge) o;
-        if(weight != edge.weight) {
-            return false;
-        }
-        if(src == edge.src && dest == edge.dest) {
-            return true;
-        }
-        if(src == edge.dest && dest == edge.src ) {
-            return true;
-        } else {
-            return false;
-        }
+        return weight == edge.weight && (src == edge.src && dest == edge.dest || src == edge.dest && dest == edge.src);
     }
 
     @Override

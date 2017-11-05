@@ -1,6 +1,6 @@
 public class UF {
 
-	//From https://algs4.cs.princeton.edu/15uf/UF.java.html
+	// Implementation from https://algs4.cs.princeton.edu/15uf/UF.java.html
 
 	private int[] parent;  // parent[i] = parent of i
 	private int[] rank;   // rank[i] = rank of subtree rooted at i (never more than 31)

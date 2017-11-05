@@ -12,11 +12,9 @@ public class Main {
             Graph graph = Graph.loadUWG(fileName);
 
             graph.findAllSpanningTrees();
-            System.out.println("Amount of spanning trees: " + graph.getNumberOfSpanningTrees());
+            System.out.println("Amount of spanning trees: " + Graph.getNumberOfSpanningTrees());
             System.out.println("Lowest B:" + Graph.getCurrentB());
-
-            System.out.println("Optimal tree: " + graph.getBestTree());
-
+            System.out.println("Optimal tree: " + Graph.getBestTree());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
