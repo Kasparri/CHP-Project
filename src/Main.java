@@ -4,48 +4,28 @@ import java.util.List;
 /**
  * Created by Kasper on 31/10/2017.
  */
+@SuppressWarnings("WeakerAccess")
 public class Main {
 
     static Graph originalGraph = null;
-    public static List<Edge> originalEdges = null;
     static Graph prunedGraph = null;
 
     public static int removedWeight = 0;
     public static int removedMirrorWeight = 0;
 
     public static void main(String[] args) {
-
         long startTime = System.currentTimeMillis();
-
         try {
-            String fileName = "TestFile3";
+            String fileName = "test03";
             originalGraph = Graph.loadUWG(fileName);
-            originalEdges = originalGraph.getEdges();
 
-            List<Edge> removedEdges = null;
-            removedEdges = pruneGraph(originalGraph);
-
-            System.out.println(removedEdges);
-            System.out.println(originalGraph.getMirrorEdges(removedEdges));
+            List<Edge> removedEdges = pruneGraph(originalGraph);
 
             removedWeight = originalGraph.getWeight(removedEdges);
             removedMirrorWeight = originalGraph.getMirrorEdgesWeight(removedEdges);
 
             prunedGraph.findAllSpanningTrees();
-
-
-            Graph best = Graph.getBestTree();
-
-
-
-            System.out.println("remvoed weight: " + removedWeight);
-            System.out.println("removed MIrror Weight: " + removedMirrorWeight);
-
-
-
             Graph.getBestTree().checkTree(Graph.getBestTree());
-
-
 
             System.out.println("Amount of spanning trees: " + Graph.getNumberOfSpanningTrees());
             System.out.println("Lowest B:" + Graph.getCurrentB());
@@ -53,7 +33,6 @@ public class Main {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
         long endTime   = System.currentTimeMillis();
         long totalTime = endTime - startTime;
         System.out.println("\nMilliseconds: " + totalTime);
@@ -61,11 +40,9 @@ public class Main {
 
 
     public static List<Edge> pruneGraph(Graph g){
-
         prunedGraph = g.copy();
 
         List<Edge> removedEdges = new ArrayList<>();
-
         int[][] adjacencyMatrix = createAdjacencyMatrix(prunedGraph);
 
         while (nodeWithSingleNeighbourLeft(adjacencyMatrix)){
@@ -86,28 +63,21 @@ public class Main {
                 }
             }
         }
-
-
-
         return removedEdges;
     }
 
     private static boolean nodeWithSingleNeighbourLeft(int[][] adjacencyMatrix) {
-
-        for (int i = 0; i < adjacencyMatrix.length; i++){
+        for (int[] anAdjacencyMatrix : adjacencyMatrix) {
             int sum = 0;
-            for (int j = 0; j < adjacencyMatrix[i].length; j++){
-                if (adjacencyMatrix[i][j] != -1){
+            for (int anAnAdjacencyMatrix : anAdjacencyMatrix) {
+                if (anAnAdjacencyMatrix != -1) {
                     sum++;
                 }
             }
-            if (sum == 1){
-                return true;
-            }
+            if (sum == 1) return true;
         }
         return false;
     }
-
 
     public static int[][] createAdjacencyMatrix(Graph g){
         int N = g.getN();
@@ -124,7 +94,4 @@ public class Main {
         }
         return adjacencyMatrix;
     }
-
-
-
 }
